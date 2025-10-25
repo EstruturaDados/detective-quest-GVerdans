@@ -1,11 +1,150 @@
-#include <stdio.h>
-
 // Desafio Detective Quest
 // Tema 4 - Árvores e Tabela Hash
 // Este código inicial serve como base para o desenvolvimento das estruturas de navegação, pistas e suspeitos.
 // Use as instruções de cada região para desenvolver o sistema completo com árvore binária, árvore de busca e tabela hash.
 
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+// 🌱 Struct Sala
+typedef struct Sala {
+    char nome[50];
+    struct Sala* esquerda;
+    struct Sala* direita;
+} Sala;
+
+// Função para criar uma nova sala
+Sala* criarSala(const char* nome) {
+    Sala* novaSala = (Sala*)malloc(sizeof(Sala));
+    if (novaSala == NULL) {
+        printf("Erro ao alocar memória para a sala!\n");
+        exit(1);
+    }
+    strcpy(novaSala->nome, nome);
+    novaSala->esquerda = NULL;
+    novaSala->direita = NULL;
+    return novaSala;
+}
+
+// Função para conectar salas
+void conectarSalas(Sala* pai, Sala* esquerda, Sala* direita) {
+    if (pai != NULL) {
+        pai->esquerda = esquerda;
+        pai->direita = direita;
+    }
+}
+
+// Função para explorar as salas
+void explorarSalas() {
+    // 🏰 Criando todas as salas da mansão
+    Sala* hallEntrada = criarSala("🎪 Hall de Entrada");
+    Sala* biblioteca = criarSala("📚 Biblioteca Antiga");
+    Sala* cozinha = criarSala("🍳 Cozinha Real");
+    Sala* sotao = criarSala("🕸️ Sótão Misterioso");
+    Sala* salaJantar = criarSala("🍽️ Sala de Jantar");
+    Sala* jardim = criarSala("🌹 Jardim de Inverno");
+    Sala* quarto = criarSala("🛏️ Quarto Principal");
+    Sala* porao = criarSala("💀 Porão Assombrado");
+    
+    // 🔗 Conectando as salas para formar a árvore binária
+    // Hall de Entrada conecta à Biblioteca (esq) e Cozinha (dir)
+    conectarSalas(hallEntrada, biblioteca, cozinha);
+    
+    // Biblioteca conecta ao Sótão (esq) e Sala de Jantar (dir)
+    conectarSalas(biblioteca, sotao, salaJantar);
+    
+    // Cozinha conecta ao Jardim (esq) e Quarto Principal (dir)
+    conectarSalas(cozinha, jardim, quarto);
+    
+    // Sala de Jantar conecta ao Porão (esq) e NULL (dir)
+    conectarSalas(salaJantar, porao, NULL);
+    
+    // 🎮 Sistema de exploração
+    Sala* salaAtual = hallEntrada;
+    char comando;
+    
+    printf("🏰 BEM-VINDO À MANSÃO MISTERIOSA! 🏰\n");
+    printf("=====================================\n");
+    printf("Use os comandos:\n");
+    printf("  'e' - ir para ESQUERDA\n");
+    printf("  'd' - ir para DIREITA\n");
+    printf("  's' - SAIR da mansão\n\n");
+    
+    do {
+        printf("\n📍 Você está na: %s\n", salaAtual->nome);
+        printf("Onde deseja ir? (e/d/s): ");
+        scanf(" %c", &comando);
+        
+        switch (comando) {
+            case 'e':
+            case 'E':
+                if (salaAtual->esquerda != NULL) {
+                    salaAtual = salaAtual->esquerda;
+                    printf("➡️ Indo para a sala à esquerda...\n");
+                } else {
+                    printf("❌ Não há sala à esquerda! É um beco sem saída.\n");
+                }
+                break;
+                
+            case 'd':
+            case 'D':
+                if (salaAtual->direita != NULL) {
+                    salaAtual = salaAtual->direita;
+                    printf("➡️ Indo para a sala à direita...\n");
+                } else {
+                    printf("❌ Não há sala à direita! É um beco sem saída.\n");
+                }
+                break;
+                
+            case 's':
+            case 'S':
+                printf("🚪 Saindo da mansão... Até a próxima!\n");
+                break;
+                
+            default:
+                printf("❌ Comando inválido! Use 'e', 'd' ou 's'.\n");
+                break;
+        }
+        
+    } while (comando != 's' && comando != 'S');
+    
+    // 🧹 Liberar memória (opcional, já que o programa está terminando)
+    free(hallEntrada);
+    free(biblioteca);
+    free(cozinha);
+    free(sotao);
+    free(salaJantar);
+    free(jardim);
+    free(quarto);
+    free(porao);
+}
+
+// Função auxiliar para mostrar o mapa da mansão
+void mostrarMapa() {
+    printf("\n🗺️  MAPA DA MANSÃO:\n");
+    printf("    🎪 Hall de Entrada\n");
+    printf("    /               \\\n");
+    printf("📚 Biblioteca     🍳 Cozinha\n");
+    printf("   /    \\          /    \\\n");
+    printf("🕸️ Sótão  🍽️ SalaJantar 🌹 Jardim  🛏️ Quarto\n");
+    printf("              /    \n");
+    printf("          💀 Porão\n\n");
+}
+
+// Função principal
 int main() {
+    printf("🌳 EXPLORAÇÃO DA MANSÃO COM ÁRVORE BINÁRIA 🌳\n");
+    
+    // Mostrar o mapa antes de começar
+    mostrarMapa();
+    
+    // Iniciar a exploração
+    explorarSalas();
+    
+    return 0;
+}
 
     // 🌱 Nível Novato: Mapa da Mansão com Árvore Binária
     //
@@ -41,7 +180,4 @@ int main() {
     // - Para hashing simples, pode usar soma dos valores ASCII do nome ou primeira letra.
     // - Em caso de colisão, use lista encadeada para tratar.
     // - Modularize com funções como inicializarHash(), buscarSuspeito(), listarAssociacoes().
-
-    return 0;
-}
 
